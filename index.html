@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple OIDC Client Sample</title>
+    <script src="openidconnect.js" type="text/javascript"></script>
+    <script type='text/javascript' language='javascript'>
+        <!--
+
+        function doLogin() {
+            try {
+                var providerInfo = OIDC.discover('https://connect.openid4.us/qrauthIdp');
+                var clientInfo = {
+                    client_id : 'stest',
+                    redirect_uri : 'https://www.sakimura.org/test/callback.html'
+                };
+
+                if(providerInfo) {
+                    OIDC.setProviderInfo(providerInfo);
+                    OIDC.setClientInfo(clientInfo);
+                    OIDC.storeInfo(providerInfo, clientInfo);
+                    var reqOptions = {
+                        scope : 'openid profile',
+                        response_type : 'token id_token',
+                        claims : {id_token : ['email', 'phone_number']}
+                    }
+                    OIDC.login(reqOptions);
+                }
+
+            }
+            catch(e) {
+                if(e instanceof OidcException )
+                    printMessage(e);
+                else
+                    printMessage(e);
+            }
+        }
+
+        function printMessage(messageString){
+            document.getElementById("results").innerHTML = messageString;
+        }
+        -->
+    </script>
+</head>
+<body>
+    <h1>Simple OpenID Connect Client Sample</h1>
+    <p>
+        <span id="results" style="color:#FF0000"></span>
+    </p>
+
+    <p>This is an extremely simple OIDC RP sample.
+This page creates the authentication request by a javascript, 
+and send it to the OP, and callback.html receives the response. 
+	</p>
+ 
+    <button onclick="doLogin();">Sign In with QRAuth</button>
+</body>
+<script type="text/javascript">
+
+
+ 
+</script>
+<div style="border:1px;background-color:#dddddd;">
+<pre>
+function doLogin() {
+    try {
+        var providerInfo = OIDC.discover('https://connect.openid4.us/qrauthIdp');
+        var clientInfo = {
+            client_id : 'stest',
+            redirect_uri : 'https://www.sakimura.org/test/callback.html'
+        };
+
+        if(providerInfo) {
+            OIDC.setProviderInfo(providerInfo);
+            OIDC.setClientInfo(clientInfo);
+            OIDC.storeInfo(providerInfo, clientInfo);
+            var reqOptions = {
+                scope : 'openid profile',
+                response_type : 'token id_token',
+                claims : {id_token : ['email', 'phone_number']}
+            }
+            OIDC.login(reqOptions);
+        }
+
+    }
+    catch(e) {
+        if(e instanceof OidcException )
+            printMessage(e);
+        else
+            printMessage(e);
+    }
+}
+</pre>
+</div>
+</html>
+
