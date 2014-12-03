@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
     <title>Simple OIDC Client Sample</title>
     <script src="openidconnect.js" type="text/javascript"></script>
     <script type='text/javascript' language='javascript'>
@@ -8,19 +9,24 @@
 
         function doLogin() {
             try {
-                var providerInfo = OIDC.discover('https://connect.openid4.us/qrauthIdp');
+                var pos = window.location.href.lastIndexOf('/');
+                if(pos == -1)
+                    throw "Unknown URL format" + window.location.href;
+                var callback = window.location.href.substr(0, pos + 1) + 'callback.html';
                 var clientInfo = {
                     client_id : 'stest',
-                    redirect_uri : 'https://www.sakimura.org/test/callback.html'
+                    redirect_uri : callback
                 };
 
+                var providerInfo = OIDC.discover('https://connect.openid4.us/qrauthIdp');
                 if(providerInfo) {
                     OIDC.setProviderInfo(providerInfo);
                     OIDC.setClientInfo(clientInfo);
                     OIDC.storeInfo(providerInfo, clientInfo);
                     var reqOptions = {
                         scope : 'openid profile',
-                        response_type : 'token id_token',
+                        response_type : 'code token id_token',
+                        max_age : 60,
                         claims : {id_token : ['email', 'phone_number']}
                     }
                     OIDC.login(reqOptions);
@@ -63,19 +69,24 @@ and send it to the OP, and callback.html receives the response.
 <pre>
 function doLogin() {
     try {
-        var providerInfo = OIDC.discover('https://connect.openid4.us/qrauthIdp');
+        var pos = window.location.href.lastIndexOf('/');
+        if(pos == -1)
+            throw "Unknown URL format : " + window.location.href;
+        var callback = window.location.href.substr(0, pos + 1) + 'callback.html';
         var clientInfo = {
             client_id : 'stest',
-            redirect_uri : 'https://www.sakimura.org/test/callback.html'
+            redirect_uri : callback
         };
 
+        var providerInfo = OIDC.discover('https://connect.openid4.us/qrauthIdp');
         if(providerInfo) {
             OIDC.setProviderInfo(providerInfo);
             OIDC.setClientInfo(clientInfo);
             OIDC.storeInfo(providerInfo, clientInfo);
             var reqOptions = {
                 scope : 'openid profile',
-                response_type : 'token id_token',
+                response_type : 'code token id_token',
+                max_age : 60,
                 claims : {id_token : ['email', 'phone_number']}
             }
             OIDC.login(reqOptions);
@@ -92,4 +103,3 @@ function doLogin() {
 </pre>
 </div>
 </html>
-

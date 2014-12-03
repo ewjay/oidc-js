@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
     <title>Cognito OIDC Sample</title>
-    <script src="openidconnect.js"></script>
+    <script src="openidconnect.js" type="text/javascript"></script>
     <script type="text/javascript" language="javascript">
         <!--
         // Print messages
@@ -32,6 +33,8 @@
                         printGreetings('<hr/>Hello ' + payload.sub);
                     }
                 }
+                var code = OIDC.getCode();
+                var token = OIDC.getAccessToken();
             }
            catch(e) {
                if(e instanceof OidcException )
@@ -51,61 +54,5 @@
         <span id="greetings" style="color:#0000FF"></span>
     </p>
 </body>
-<script type="text/javascript">
-    // Make AWS request using Cognito
-    function makeCognitoRequest(id_token) {
-        var aws_region = 'us-east-1';
-        var provider_url = 'login.salesforce.com'; 
-        var logins = {};
-        logins[provider_url] = id_token;
-         
-        // **** REPLACE account_id, role_arn, pool_id, and table_name WITH YOUR OWN VALUES ****
-        var account_id = '123456789012';
-        var role_arn = 'arn:aws:iam::123456789012:role/Cognito_SalesforceAuth_DefaultRole';
-        var pool_id = 'us-east-1:11111111-aaaa-2222-bbbb-222222222222';
-        var table_name = 'ProductCatalog';
-         
-        // Parameters required for CognitoIdentityCredentials
-        var params = {
-            AccountId: account_id,
-            RoleArn: role_arn,
-            IdentityPoolId: pool_id,
-            Logins: logins
-        };
- 
-        // Amazon Cognito region
-        AWS.config.region = aws_region;
- 
-        // Initialize CognitoIdentityCredentials
-        AWS.config.credentials = new AWS.CognitoIdentityCredentials(params);
- 
-        // Cognito credentials 
-        AWS.config.credentials.get(function (err) {
-            if (err) {  // an error occurred
-                printMessage(err);
-            }else{      // successful response
- 
-                // DynamoDB client will automatically use the Cognito identity credentials provider
-                var ddb = new AWS.DynamoDB();
-                 
-                // Scan the table
-                ddb.scan({TableName: table_name}, function (err, data) {
-                    if (err){   // an error occurred
-                        printMessage(err);   
-                    }else{      // successful response
-                         
-                        // Print the items
-                        var items = '';
-                        for (i = 0; i < data.Count; i++) {
-                            items += data.Items[i].Id.N + ' ';
-                        }    
-                        printMessage('<span style="color:#000000">Items found:</span>'  + items);                
-                    }
-                });
-            }
-        });      
-    }
-
-</script>
 <a href="index.html">TOP</a>
 </html>
