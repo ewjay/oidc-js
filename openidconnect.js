@@ -1,14 +1,37 @@
 
+
+
+/**
+ * OIDC namespace
+ * @namespace OIDC
+ */
 var OIDC = namespace('OIDC');
 
+/**
+ * @property {array} OIDC.supportedProviderOptions                                 - List of the Identity Provider's configuration parameters
+ * @property {string} OIDC.supportedProviderOptions.issuer                         - Issuer ID
+ * @property {string} OIDC.supportedProviderOptions.authorization_endpoint         - Authorization Endpoint URL
+ * @property {string} OIDC.supportedProviderOptions.jwks_uri                       - JWKS URL
+ * @property {boolean} OIDC.supportedProviderOptions.claims_parameter_supported    - Claims parameter support
+ * @property {boolean} OIDC.supportedProviderOptions.request_parameter_supported   - Request parameter support
+ * @property {object} OIDC.supportedProviderOptions.jwks                           - Identity Provider's JWK Set
+ * @readonly
+ * @memberof OIDC
+ */
 OIDC.supportedProviderOptions = [
     'issuer',
     'authorization_endpoint',
+    'jwks_uri',
+    'claims_parameter_supported',
+    'request_parameter_supported',
+    'jwks'
+
+    /*
+    / Reserve for future use
     'token_endpoint',
     'userinfo_endpoint',
     'check_session_iframe',
     'end_session_endpoint',
-    'jwks_uri',
     'registration_endpoint',
     'scopes_supported',
     'response_types_supported',
@@ -34,13 +57,25 @@ OIDC.supportedProviderOptions = [
     'op_policy_uri',
     'op_tos_uri',
     'claims_locales_supported',
-    'claims_parameter_supported',
-    'request_parameter_supported',
     'request_uri_parameter_supported',
-    'jwks'
+    */
 ];
 
-OIDC.suppportedRequestOptions = [
+/**
+ * @property {array} OIDC.supportedRequestOptions             - Supported Login Request parameters
+ * @property {string} OIDC.supportedRequestOptions.scope      - space separated scope values
+ * @property {string} OIDC.supportedRequestOptions.response_type  - space separated response_type values
+ * @property {string} OIDC.supportedRequestOptions.display    - display
+ * @property {string} OIDC.supportedRequestOptions.max_age    - max_age
+ * @property {object} OIDC.supportedRequestOptions.claims    - claims object containing what information to return in the UserInfo endpoint and ID Token
+ * @property {array} OIDC.supportedRequestOptions.claims.id_token    - list of claims to return in the ID Token
+ * @property {array} OIDC.supportedRequestOptions.claims.userinfo    - list of claims to return in the UserInfo endpoint
+ * @property {boolean} OIDC.supportedRequestOptions.request   - signed request object JWS. Not supported yet.
+ * @readonly
+ * @memberof OIDC
+ *
+ */
+OIDC.supportedRequestOptions = [
     'scope',
     'response_type',
     'display',
@@ -49,13 +84,41 @@ OIDC.suppportedRequestOptions = [
     'request'
 ];
 
+/**
+ * @property {array} OIDC.supportedClientOptions                 - List of supported Client configuration parameters
+ * @property {string} OIDC.supportedClientOptions.client_id      - The client's client_id
+ * @property {string} OIDC.supportedClientOptions.redirect_uri   - The client's redirect_uri
+ * @readonly
+ * @memberof OIDC
+ *
+ */
 OIDC.supportedClientOptions = [
     'client_id',
-    'client_secret',
     'redirect_uri'
+//    'client_secret',
 ];
 
 
+/**
+ * Sets the Identity Provider's configuration parameters
+ * @function setProviderInfo
+ * @memberof OIDC
+ * @param {object} p      - The Identity Provider's configuration options described in {@link OIDC.supportedProviderOptions}
+ * @returns {boolean}     - Indicates status of
+ * @example
+ * // set Identity Provider configuration
+ * OIDC.setProviderInfo( {
+ *                          issuer: 'https:/op.example.com',
+ *                          authorization_endpoint: 'http://op.example.com/auth.html',
+ *                          jwks_uri: 'https://op.example.com/jwks'
+ *                       }
+ *                     );
+ *
+ * // set Identity Provider configuration using discovery information
+ * var discovery = OIDC.discover('https://op.example.com');
+ * if(var)
+ *     OIDC.setProviderInfo(discovery);
+ */
 OIDC.setProviderInfo = function (p) {
     var params = this.supportedProviderOptions;
 
@@ -69,6 +132,21 @@ OIDC.setProviderInfo = function (p) {
     return true;
 };
 
+
+/**
+ * Sets the Client's configuration parameters
+ * @function setClientInfo
+ * @memberof OIDC
+ * @param {object} p      - The Client's configuration options described in {@link OIDC.supportedClientOptions}
+ * @returns {boolean}       Indicates status of call
+ * @example
+ * // set client_id and redirect_uri
+ * OIDC.setClientInfo( {
+ *                          client_id: 'myclientID',
+ *                          redirect_uri: 'https://rp.example.com/callback.html'
+ *                     }
+ *                   );
+ */
 OIDC.setClientInfo = function(p)
 {
     var params = this.supportedClientOptions;
@@ -83,6 +161,14 @@ OIDC.setClientInfo = function(p)
     return true;
 };
 
+
+/**
+ * Stores the Identity Provider and Client configuration options in the browser session storage for reuse later
+ * @function storeInfo
+ * @memberof OIDC
+ * @param {object} providerInfo    - The Identity Provider's configuration options described in {@link OIDC.supportedProviderOptions}
+ * @param {object} clientInfo      - The Client's configuration options described in {@link OIDC.supportedClientOptions}
+ */
 OIDC.storeInfo = function (providerInfo, clientInfo)
 {
     var pOptions = this.supportedProviderOptions;
@@ -113,6 +199,12 @@ OIDC.storeInfo = function (providerInfo, clientInfo)
     }
 };
 
+
+/**
+ * Load and restore the Identity Provider and Client configuration options from the browser session storage
+ * @function restoreInfo
+ * @memberof OIDC
+ */
 OIDC.restoreInfo = function()
 {
     var providerInfo = sessionStorage['providerInfo'];
@@ -125,6 +217,15 @@ OIDC.restoreInfo = function()
     }
 };
 
+/**
+ * Check whether the required configuration parameters are set
+ * @function checkRequiredInfo
+ * @param {array} params    - List of Identity Provider and client configuration parameters
+ * @memberof OIDC
+ * @private
+ * @return {boolean}        - Indicates whether the options have been set
+ *
+ */
 OIDC.checkRequiredInfo = function(params)
 {
     if(params) {
@@ -137,6 +238,12 @@ OIDC.checkRequiredInfo = function(params)
     return true;
 };
 
+/**
+ * Clears the Identity Provider configuration parameters
+ * @function clearProviderInfo
+ * @memberof OIDC
+ * @private
+ */
 OIDC.clearProviderInfo = function()
 {
     for(var i = 0; i < this.supportedProviderOptions.length; i++) {
@@ -145,6 +252,27 @@ OIDC.clearProviderInfo = function()
 };
 
 
+/**
+ * Redirect to the Identity Provider for authenticaton
+ * @param {object} reqOptions    - Optional authentication request options. See {@link OIDC.supportedRequestOptions}
+ * @throws {OidcException}
+ * @example
+ *
+ * // login with options
+ * OIDC.login( {
+ *               scope : 'openid profile',
+ *               response_type : 'token id_token',
+ *               max_age : 60,
+ *               claims : {
+ *                          id_token : ['email', 'phone_number'],
+ *                          userinfo : ['given_name', 'family_name']
+ *                        }
+ *              }
+ *            );
+ *
+ * // login with default scope=openid, response_type=id_token
+ * OIDC.login();
+ */
 OIDC.login = function(reqOptions) {
     // verify required parameters
     this.checkRequiredInfo(new Array('client_id', 'redirect_uri', 'authorization_endpoint'));
@@ -161,6 +289,8 @@ OIDC.login = function(reqOptions) {
 
     var response_type = 'id_token';
     var scope = 'openid';
+    var display = null;
+    var max_age = null;
     var claims = null;
     var idTokenClaims = {};
     var userInfoClaims = {};
@@ -181,6 +311,11 @@ OIDC.login = function(reqOptions) {
 
         if(reqOptions['scope'])
             scope = reqOptions['scope'];
+        if(reqOptions['display'])
+            display = reqOptions['display'];
+        if(reqOptions['max_age'])
+            max_age = reqOptions['max_age'];
+
 
         if(reqOptions['claims']) {
 
@@ -195,12 +330,12 @@ OIDC.login = function(reqOptions) {
                     claims['id_token'] = idTokenClaims;
                 }
                 if(reqOptions['claims']['userinfo']) {
-                    for(var j = 0; j < reqOptions['claims']['userinfo'].length; j++) {
-                        userInfoClaims[reqOptions['claims']['userinfo'][j]] = null;
-                        if(!claims)
-                            claims = {};
-                        claims['userinfo'] = userInfoClaims;
+                    for(var k = 0; k < reqOptions['claims']['userinfo'].length; k++) {
+                        userInfoClaims[reqOptions['claims']['userinfo'][k]] = null;
                     }
+                    if(!claims)
+                        claims = {};
+                    claims['userinfo'] = userInfoClaims;
                 }
 
             } else
@@ -217,9 +352,14 @@ OIDC.login = function(reqOptions) {
     // redirect_uri must match the callback URL configured for
     // the connected app.
 
-    var claimsReq = '';
+    var optParams = '';
+    if(display)
+        optParams += '&display='  + display;
+    if(max_age)
+        optParams += '&max_age=' + max_age;
     if(claims)
-        claimsReq = '&claims=' + JSON.stringify(claims);
+        optParams += '&claims=' + JSON.stringify(claims);
+
     var url =
         this['authorization_endpoint']
             + '?response_type=' + response_type
@@ -228,13 +368,22 @@ OIDC.login = function(reqOptions) {
             + '&client_id=' + this['client_id']
             + '&redirect_uri=' + this['redirect_uri']
             + '&state=' + state
-            + claimsReq;
+            + optParams;
 
 
     window.location.replace(url);
 };
 
 
+/**
+ * Verifies the ID Token signature using the JWK Keyset from jwks or jwks_uri of the
+ * Identity Provider Configuration options set via {@link OIDC.setProviderInfo}.
+ * Supports only RSA signatures
+ * @param {string }idtoken      - The ID Token string
+ * @returns {boolean}           Indicates whether the signature is valid or not
+ * @see OIDC.setProviderInfo
+ * @throws {OidcException}
+ */
 OIDC.verifyIdTokenSig = function (idtoken)
 {
     var verified = false;
@@ -262,6 +411,14 @@ OIDC.verifyIdTokenSig = function (idtoken)
     return verified;
 }
 
+
+/**
+ * Validates the information in the ID Token against configuration data in the Identity Provider
+ * and Client configuration set via {@link OIDC.setProviderInfo} and set via {@link OIDC.setClientInfo}
+ * @param {string} idtoken      - The ID Token string
+ * @returns {boolean}           Validity of the ID Token
+ * @throws {OidcException}
+ */
 OIDC.isValidIdToken = function(idtoken) {
 
     var idt = null;
@@ -292,6 +449,13 @@ OIDC.isValidIdToken = function(idtoken) {
     return valid;
 }
 
+/**
+ * Verifies the JWS string using the JWK
+ * @param {string} jws      - The JWS string
+ * @param {object} jwk      - The JWK Key that will be used to verify the signature
+ * @returns {boolean}       Validity of the JWS signature
+ * @throws {OidcException}
+ */
 OIDC.rsaVerifyJWS = function (jws, jwk)
 {
     if(jws && typeof jwk === 'object') {
@@ -305,13 +469,19 @@ OIDC.rsaVerifyJWS = function (jws, jwk)
                 return verifier.verifyJWSByPemX509Cert(jws, "-----BEGIN CERTIFICATE-----\n" + jwk['x5c'][0] + "\n-----END CERTIFICATE-----\n");
             }
         } else {
-            throw new OidcException('Not RSA kty in JWK');
+            throw new OidcException('No RSA kty in JWK');
         }
     }
     return false;
 }
 
-OIDC.getValidIdToken = function(params)
+/**
+ * Get the ID Token from the current page URL whose signature is verified and contents validated
+ * against the configuration data set via {@link OIDC.setProviderInfo} and {@link OIDC.setClientInfo}
+ * @returns {string|null}
+ * @throws {OidcException}
+ */
+OIDC.getValidIdToken = function()
 {
     var url = window.location.href;
 
@@ -351,19 +521,74 @@ OIDC.getValidIdToken = function(params)
     return null;
 };
 
-// Parse ID Token
+
+/**
+ * Get Access Token from the current page URL
+ *
+ * @returns {string|null}  Access Token
+ */
+OIDC.getAccessToken = function()
+{
+    var url = window.location.href;
+
+    // Check for token
+    var token = url.match('access_token=([^&]*)');
+    if (token)
+        return token[1];
+    else
+        return null;
+
+}
+
+
+/**
+ * Get Authorization Code from the current page URL
+ *
+ * @returns {string|null}  Authorization Code
+ */
+OIDC.getCode = function()
+{
+    var url = window.location.href;
+
+    // Check for code
+    var code = url.match('code=([^(&)]*)');
+    if (code) {
+        console.log('got code');
+        return code[1];
+    }
+    console.log('no code match');
+        return null;
+
+}
+
+
+/**
+ * Splits the ID Token string into the individual JWS parts
+ * @param  {string} id_token    - ID Token
+ * @returns {Array} An array of the JWS compact serialization components (header, payload, signature)
+ */
 OIDC.getIdTokenParts = function (id_token) {
     var jws = new KJUR.jws.JWS();
     jws.parseJWS(id_token);
     return new Array(jws.parsedJWS.headS, jws.parsedJWS.payloadS, jws.parsedJWS.si);
 };
 
+/**
+ * Get the contents of the ID Token payload as an JSON object
+ * @param {string} id_token     - ID Token
+ * @returns {object}            - The ID Token payload JSON object
+ */
 OIDC.getIdTokenPayload = function (id_token) {
     var parts = this.getIdTokenParts(id_token);
     if(parts)
         return this.getJsonObject(parts[1]);
 }
 
+/**
+ * Get the JSON object from the JSON string
+ * @param {string} jsonS    - JSON string
+ * @returns {object|null}   JSON object or null
+ */
 OIDC.getJsonObject = function (jsonS) {
     var jws = new KJUR.jws.JWS();
     if(jws.isSafeJSONString(jsonS)) {
@@ -374,20 +599,12 @@ OIDC.getJsonObject = function (jsonS) {
 };
 
 
-function namespace(namespaceString) {
-    var parts = namespaceString.split('.'),
-        parent = window,
-        currentPart = '';
-
-    for(var i = 0, length = parts.length; i < length; i++) {
-        currentPart = parts[i];
-        parent[currentPart] = parent[currentPart] || {};
-        parent = parent[currentPart];
-    }
-    return parent;
-}
-
-
+/**
+ * Retrieves the JSON file at the specified URL. The URL must have CORS enabled for this function to work.
+ * @param {string} url      - URL to fetch the JSON file
+ * @returns {string|null}    contents of the URL or null
+ * @throws {OidcException}
+ */
 OIDC.fetchJSON = function(url) {
     try {
         var request = new XMLHttpRequest();
@@ -406,6 +623,14 @@ OIDC.fetchJSON = function(url) {
     return null;
 };
 
+/**
+ * Retrieve the JWK key that matches the input criteria
+ * @param {string|object} jwkIn     - JWK Keyset string or object
+ * @param {string} kty              - The 'kty' to match (RSA|EC). Only RSA is supported.
+ * @param {string}use               - The 'use' to match (sig|enc).
+ * @param {string}kid               - The 'kid' to match
+ * @returns {array}                 Array of JWK keys that match the specified criteria                                                                     itera
+ */
 OIDC.jwk_get_key = function(jwkIn, kty, use, kid )
 {
     var jwk = null;
@@ -462,30 +687,57 @@ OIDC.jwk_get_key = function(jwkIn, kty, use, kid )
 
 };
 
-
+/**
+ * Performs discovery on the IdP issuer_id (OIDC.discover)
+ * @function discover
+ * @memberof OIDC
+ * @param {string} issuer     - The Identity Provider's issuer_id
+ * @returns {object|null}     - The JSON object of the discovery document or null
+ * @throws {OidcException}
+ */
 OIDC.discover = function(issuer)
 {
     var discovery = null;
     if(issuer) {
         var openidConfig = issuer + '/.well-known/openid-configuration';
         var discoveryDoc = this.fetchJSON(openidConfig);
-        if(discoveryDoc) {
+        if(discoveryDoc)
             discovery = this.getJsonObject(discoveryDoc)
-        }
     }
     return discovery;
 };
 
 
+/**
+ * OidcException
+ * @param {string } message  - The exception error message
+ * @constructor
+ */
 function OidcException(message) {
     this.name = 'OidcException';
     this.message = message;
 }
-
 OidcException.prototype = new Error();
 OidcException.prototype.constructor = OidcException;
 
 
+
+function namespace(namespaceString) {
+    var parts = namespaceString.split('.'),
+        parent = window,
+        currentPart = '';
+
+    for(var i = 0, length = parts.length; i < length; i++) {
+        currentPart = parts[i];
+        parent[currentPart] = parent[currentPart] || {};
+        parent = parent[currentPart];
+    }
+    return parent;
+}
+
+/*
+ * The following are libraries included for convenience.
+ */
 
 /*
  CryptoJS v3.1.2
