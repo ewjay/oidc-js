@@ -1,0 +1,78 @@
+oidc-js - OpenID Connect Javascript Client
+
+
+This is an implementation of a Relying Party for OpenID Connect using Javascript
+
+
+
+
+Usage :
+
+1) Include the openidconnect.js script
+
+
+2) To perform authentication at the Identity Provider
+
+
+a)  Set the provider and client configuration information
+
+// set client_id and redirect_uri
+var clientInfo = {
+    client_id : 'MyClientId',
+    redirect_uri : 'https://rp.example.com/callback.html'
+};
+OIDC.setClientInfo( clientInfo );
+
+
+// set Identity Provider configuration information using discovery
+var providerInfo = OIDC.discover('https://op.example.com');
+
+// or set via manual configuration
+// var providerInfo = {
+//                      issuer: 'https:/op.example.com',
+//                      authorization_endpoint: 'http://op.example.com/auth.html',
+//                      jwks_uri: 'https://op.example.com/jwks'
+//                    };
+
+
+// set Identity Provider configuration
+OIDC.setProviderInfo( providerInfo );
+
+// store configuration for reuse in the callback page
+
+OIDC.storeInfo(providerInfo, clientInfo);
+
+
+3) Login
+// Redirect to login
+// login with default scope=openid, response_type=id_token
+OIDC.login();
+
+// login with options
+OIDC.login( {
+              scope : 'openid profile',
+              response_type : 'code token id_token',
+              max_age : 60,
+              claims : {
+                         id_token : ['email', 'phone_number'],
+                         userinfo : ['given_name', 'family_name']
+                       }
+             }
+           );
+
+
+4) In callback page, handle the response.
+
+// Restore configuration information
+
+OIDC.restoreInfo();
+
+// Get ID Token
+var id_token = OIDC.getValidIdToken();
+
+// Get code
+var code = OIDC.getCode();
+
+// Get Access Token
+var token = OIDC.getAccessToken();
+
