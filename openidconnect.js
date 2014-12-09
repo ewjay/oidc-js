@@ -277,11 +277,37 @@ OIDC.login = function(reqOptions) {
     // verify required parameters
     this.checkRequiredInfo(new Array('client_id', 'redirect_uri', 'authorization_endpoint'));
 
-    // State has to be generated each time. So is nonce.
-    // WARNING: Below is not a real random. You should use real one.
+    var state = null;
+    var nonce = null;
 
-    var state = (Math.random() + 1).toString(36).substring(7);
-    var nonce = (Math.random() + 1).toString(36).substring(7);
+    // Replace state and nonce with secure ones if
+    var crypto = window.crypto || window.msCrypto;
+    if(crypto && crypto.getRandomValues) {
+        var D = new Uint32Array(2);
+        crypto.getRandomValues(D);
+        state = D[0].toString(36);
+        nonce = D[1].toString(36);
+    } else {
+        var byteArrayToLong = function(/*byte[]*/byteArray) {
+            var value = 0;
+            for ( var i = byteArray.length - 1; i >= 0; i--) {
+                value = (value * 256) + byteArray[i];
+            }
+            return value;
+        };
+
+        rng_seed_time();
+        var sRandom = new SecureRandom();
+        var randState= new Array(4);
+        sRandom.nextBytes(randState);
+        state = byteArrayToLong(randState).toString(36);
+
+        rng_seed_time();
+        var randNonce= new Array(4);
+        sRandom.nextBytes(randNonce);
+        nonce = byteArrayToLong(randNonce).toString(36);
+    }
+
 
     // Store the them in session storage
     sessionStorage['state'] = state;
@@ -430,7 +456,6 @@ OIDC.isValidIdToken = function(idtoken) {
         var payload = this.getJsonObject(idtParts[1])
         if(payload) {
             var now =  new Date() / 1000;
-            console.log('iat = ' + payload['iat'] + ' now = ' + now + ' exp = ' + payload['exp']);
             if( payload['iat'] >  now + (5 * 60))
                 throw new OidcException('ID Token issued time is later than current time');
             if(payload['exp'] < now - (5*60))
@@ -537,7 +562,6 @@ OIDC.getAccessToken = function()
         return token[1];
     else
         return null;
-
 }
 
 
@@ -553,12 +577,8 @@ OIDC.getCode = function()
     // Check for code
     var code = url.match('code=([^(&)]*)');
     if (code) {
-        console.log('got code');
         return code[1];
     }
-    console.log('no code match');
-        return null;
-
 }
 
 
@@ -846,3 +866,10 @@ var jsonParse=(function(){var e="(?:-?\\b(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][
  */
 if(typeof KJUR=="undefined"||!KJUR){KJUR={}}if(typeof KJUR.jws=="undefined"||!KJUR.jws){KJUR.jws={}}KJUR.jws.JWS=function(){this.isSafeJSONString=function(l,k,m){var n=null;try{n=jsonParse(l);if(typeof n!="object"){return 0}if(n.constructor===Array){return 0}if(k){k[m]=n}return 1}catch(j){return 0}};this.readSafeJSONString=function(k){var l=null;try{l=jsonParse(k);if(typeof l!="object"){return null}if(l.constructor===Array){return null}return l}catch(j){return null}};this.getEncodedSignatureValueFromJWS=function(j){if(j.match(/^[^.]+\.[^.]+\.([^.]+)$/)==null){throw"JWS signature is not a form of 'Head.Payload.SigValue'."}return RegExp.$1};this.parseJWS=function(m,o){if((this.parsedJWS!==undefined)&&(o||(this.parsedJWS.sigvalH!==undefined))){return}if(m.match(/^([^.]+)\.([^.]+)\.([^.]+)$/)==null){throw"JWS signature is not a form of 'Head.Payload.SigValue'."}var p=RegExp.$1;var k=RegExp.$2;var q=RegExp.$3;var s=p+"."+k;this.parsedJWS={};this.parsedJWS.headB64U=p;this.parsedJWS.payloadB64U=k;this.parsedJWS.sigvalB64U=q;this.parsedJWS.si=s;if(!o){var n=b64utohex(q);var l=parseBigInt(n,16);this.parsedJWS.sigvalH=n;this.parsedJWS.sigvalBI=l}var j=b64utoutf8(p);var r=b64utoutf8(k);this.parsedJWS.headS=j;this.parsedJWS.payloadS=r;if(!this.isSafeJSONString(j,this.parsedJWS,"headP")){throw"malformed JSON string for JWS Head: "+j}};function a(k,j){return utf8tob64u(k)+"."+utf8tob64u(j)}function e(l,k){var j=function(m){return KJUR.crypto.Util.hashString(m,k)};if(j==null){throw"hash function not defined in jsrsasign: "+k}return j(l)}function g(p,m,j,n,l){var o=a(p,m);var k=parseBigInt(j,16);return _rsasign_verifySignatureWithArgs(o,k,n,l)}this.verifyJWSByNE=function(l,k,j){this.parseJWS(l);return _rsasign_verifySignatureWithArgs(this.parsedJWS.si,this.parsedJWS.sigvalBI,k,j)};this.verifyJWSByKey=function(m,l){this.parseJWS(m);var j=b(this.parsedJWS.headP);var k=this.parsedJWS.headP.alg.substr(0,2)=="PS";if(l.hashAndVerify){return l.hashAndVerify(j,new Buffer(this.parsedJWS.si,"utf8").toString("base64"),b64utob64(this.parsedJWS.sigvalB64U),"base64",k)}else{if(k){return l.verifyStringPSS(this.parsedJWS.si,this.parsedJWS.sigvalH,j)}else{return l.verifyString(this.parsedJWS.si,this.parsedJWS.sigvalH)}}};this.verifyJWSByPemX509Cert=function(l,j){this.parseJWS(l);var k=new X509();k.readCertPEM(j);return k.subjectPublicKeyRSA.verifyString(this.parsedJWS.si,this.parsedJWS.sigvalH)};function b(k){var l=k.alg;var j="";if(l!="RS256"&&l!="RS512"&&l!="PS256"&&l!="PS512"){throw"JWS signature algorithm not supported: "+l}if(l.substr(2)=="256"){j="sha256"}if(l.substr(2)=="512"){j="sha512"}return j}function d(j){return b(jsonParse(j))}function i(j,o,r,l,p,q){var m=new RSAKey();m.setPrivate(l,p,q);var k=d(j);var n=m.signString(r,k);return n}function h(p,o,n,m,l){var j=null;if(typeof l=="undefined"){j=d(p)}else{j=b(l)}var k=l.alg.substr(0,2)=="PS";if(m.hashAndSign){return b64tob64u(m.hashAndSign(j,n,"binary","base64",k))}else{if(k){return hextob64u(m.signStringPSS(n,j))}else{return hextob64u(m.signString(n,j))}}}function f(o,l,n,k,m){var j=a(o,l);return i(o,l,j,n,k,m)}this.generateJWSByNED=function(q,m,p,l,o){if(!this.isSafeJSONString(q)){throw"JWS Head is not safe JSON string: "+q}var k=a(q,m);var n=i(q,m,k,p,l,o);var j=hextob64u(n);this.parsedJWS={};this.parsedJWS.headB64U=k.split(".")[0];this.parsedJWS.payloadB64U=k.split(".")[1];this.parsedJWS.sigvalB64U=j;return k+"."+j};this.generateJWSByKey=function(o,m,j){var n={};if(!this.isSafeJSONString(o,n,"headP")){throw"JWS Head is not safe JSON string: "+o}var l=a(o,m);var k=h(o,m,l,j,n.headP);this.parsedJWS={};this.parsedJWS.headB64U=l.split(".")[0];this.parsedJWS.payloadB64U=l.split(".")[1];this.parsedJWS.sigvalB64U=k;return l+"."+k};function c(p,o,n,k){var m=new RSAKey();m.readPrivateKeyFromPEMString(k);var j=d(p);var l=m.signString(n,j);return l}this.generateJWSByP1PrvKey=function(o,m,j){if(!this.isSafeJSONString(o)){throw"JWS Head is not safe JSON string: "+o}var l=a(o,m);var n=c(o,m,l,j);var k=hextob64u(n);this.parsedJWS={};this.parsedJWS.headB64U=l.split(".")[0];this.parsedJWS.payloadB64U=l.split(".")[1];this.parsedJWS.sigvalB64U=k;return l+"."+k}};
 
+/*! (c) Tom Wu | http://www-cs-students.stanford.edu/~tjw/jsbn/
+ */
+function Arcfour(){this.i=0;this.j=0;this.S=new Array()}function ARC4init(d){var c,a,b;for(c=0;c<256;++c){this.S[c]=c}a=0;for(c=0;c<256;++c){a=(a+this.S[c]+d[c%d.length])&255;b=this.S[c];this.S[c]=this.S[a];this.S[a]=b}this.i=0;this.j=0}function ARC4next(){var a;this.i=(this.i+1)&255;this.j=(this.j+this.S[this.i])&255;a=this.S[this.i];this.S[this.i]=this.S[this.j];this.S[this.j]=a;return this.S[(a+this.S[this.i])&255]}Arcfour.prototype.init=ARC4init;Arcfour.prototype.next=ARC4next;function prng_newstate(){return new Arcfour()}var rng_psize=256;
+
+
+/*! (c) Tom Wu | http://www-cs-students.stanford.edu/~tjw/jsbn/ */
+var rng_state;var rng_pool;var rng_pptr;function rng_seed_int(a){rng_pool[rng_pptr++]^=a&255;rng_pool[rng_pptr++]^=(a>>8)&255;rng_pool[rng_pptr++]^=(a>>16)&255;rng_pool[rng_pptr++]^=(a>>24)&255;if(rng_pptr>=rng_psize){rng_pptr-=rng_psize}}function rng_seed_time(){rng_seed_int(new Date().getTime())}if(rng_pool==null){rng_pool=new Array();rng_pptr=0;var t;if(navigator.appName=="Netscape"&&navigator.appVersion<"5"&&window.crypto){var z=window.crypto.random(32);for(t=0;t<z.length;++t){rng_pool[rng_pptr++]=z.charCodeAt(t)&255}}while(rng_pptr<rng_psize){t=Math.floor(65536*Math.random());rng_pool[rng_pptr++]=t>>>8;rng_pool[rng_pptr++]=t&255}rng_pptr=0;rng_seed_time()}function rng_get_byte(){if(rng_state==null){rng_seed_time();rng_state=prng_newstate();rng_state.init(rng_pool);for(rng_pptr=0;rng_pptr<rng_pool.length;++rng_pptr){rng_pool[rng_pptr]=0}rng_pptr=0}return rng_state.next()}function rng_get_bytes(b){var a;for(a=0;a<b.length;++a){b[a]=rng_get_byte()}}function SecureRandom(){}SecureRandom.prototype.nextBytes=rng_get_bytes;
