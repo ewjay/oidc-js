@@ -460,8 +460,14 @@ OIDC.isValidIdToken = function(idtoken) {
                 throw new OidcException('ID Token issued time is later than current time');
             if(payload['exp'] < now - (5*60))
                 throw new OidcException('ID Token expired');
-
-            if(payload['aud'][0]!= this['client_id'])
+            var audience = null;
+            if(payload['aud']) {
+                if(payload['aud'] instanceof Array) {
+                    audience = payload['aud'][0];
+                } else
+                    audience = payload['aud'];
+            }
+            if(audience != this['client_id'])
                 throw new OidcException('invalid audience');
             if(payload['iss'] != this['issuer'])
                 throw new OidcException('invalid issuer ' + payload['iss'] + ' != ' + this['issuer']);
