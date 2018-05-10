@@ -3,9 +3,38 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
     <title>Cognito OIDC Sample</title>
-    <script src="openidconnect.js" type="text/javascript"></script>
+    <script src="libCrypto.js" type="text/javascript"></script>
+    <script src="libOidc.js" type="text/javascript"></script>
+    <!--<script src="openidconnect.js" type="text/javascript"></script>-->
     <script type="text/javascript" language="javascript">
         <!--
+
+        function output(inp) {
+            document.body.appendChild(document.createElement('pre')).innerHTML = inp;
+        }
+
+        function syntaxHighlight(json) {
+            if (typeof json != 'string') {
+                json = JSON.stringify(json, undefined, 2);
+            }
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                var cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                    } else {
+                        cls = 'string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
         // Print messages
         function printMessage(messageString){
             document.getElementById("results").innerHTML = messageString;
@@ -27,14 +56,25 @@
                     // split ID Token into parts
                     var jws_p = OIDC.getIdTokenParts(id_token);
                     if(jws_p !== null) {
-                        printMessage('<hr /><span style="color:#000000">id token from QRAuthIdp: </span>' + id_token + '<hr/>' + jws_p.join(' <br>'));
-                        // parse JSON string into object
+//                        printMessage('<hr /><span style="color:#000000">ID Token: </span>' + id_token + '<hr/>' + jws_p.join(' <br>'));                        // parse JSON string into object
+                        printMessage('<hr /><span style="color:#000000">ID Token: </span><pre>' + id_token + '</pre><hr/>');
                         var payload = OIDC.getJsonObject(jws_p[1]);
-                        printGreetings('<hr/>Hello ' + payload.sub);
+                        printGreetings('<hr>Hello ' + payload.sub + '</hr>' );
+                        output(syntaxHighlight(JSON.stringify(OIDC.getJsonObject(jws_p[0]), null, 4)));
+                        output(syntaxHighlight(JSON.stringify(payload, null, 4)));
                     }
+                } else {
+                    printMessage('<hr/>No valid ID Token<br/>');
                 }
                 var code = OIDC.getCode();
                 var token = OIDC.getAccessToken();
+                if(token) {
+                    var userinfo = OIDC.getUserInfo(token);
+                    if(userinfo) {
+                        output(syntaxHighlight(JSON.stringify(userinfo, null, 4)));
+                    }
+                }
+
             }
            catch(e) {
                if(e instanceof OidcException )
@@ -45,14 +85,23 @@
         }
         -->
     </script>
+    <style type="text/css">
+        pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+        .string { color: green; }
+        .number { color: darkorange; }
+        .boolean { color: blue; }
+        .null { color: magenta; }
+        .key { color: red; }
+    </style>
 </head>
 <body onload="doLoad();">
-    <h1>Sample App - Simple OpenID Connect</h1>
-    <p>Results after authentication with QRAuthIdp:</p>
+    <h1>Oidc-js - Simple OpenID Connect</h1>
+    <p>Results after authentication:</p>
     <p>
         <span id="results" style="color:#FF0000"></span>
         <span id="greetings" style="color:#0000FF"></span>
     </p>
+    <a href="index.html">TOP</a>
 </body>
-<a href="index.html">TOP</a>
+
 </html>
