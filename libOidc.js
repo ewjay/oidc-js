@@ -20,27 +20,27 @@
  */
 
 /**
- * The 'jsjws'(JSON Web Signature JavaScript Library) License
- *
- * Copyright (c) 2012 Kenji Urushima
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+  * The 'jsjws'(JSON Web Signature JavaScript Library) License
+  *
+  * Copyright (c) 2012 Kenji Urushima
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  * of this software and associated documentation files (the "Software"), to deal
+  * in the Software without restriction, including without limitation the rights
+  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  * copies of the Software, and to permit persons to whom the Software is
+  * furnished to do so, subject to the following conditions:
+  *
+  * The above copyright notice and this permission notice shall be included in
+  * all copies or substantial portions of the Software.
+  *
+  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  * THE SOFTWARE.
  */
 
 /**
@@ -120,44 +120,44 @@ var OIDC = namespace('OIDC');
 OIDC.supportedProviderOptions = [
     'issuer',
     'authorization_endpoint',
+    'token_endpoint',
+    'userinfo_endpoint',
+    'registration_endpoint',
     'jwks_uri',
     'claims_parameter_supported',
     'request_parameter_supported',
     'jwks'
 
     /*
-     / Reserve for future use
-     'token_endpoint',
-     'userinfo_endpoint',
-     'check_session_iframe',
-     'end_session_endpoint',
-     'registration_endpoint',
-     'scopes_supported',
-     'response_types_supported',
-     'grant_types_supported',
-     'acr_values_supported',
-     'subject_types_supported',
-     'userinfo_signing_alg_values_supported',
-     'userinfo_encryption_alg_values_supported',
-     'id_token_signing_alg_values_supported',
-     'id_token_encryption_alg_values_supported',
-     'id_token_encryption_enc_values_supported',
-     'request_object_signing_alg_values_supported',
-     'request_object_encryption_alg_values_supported',
-     'request_object_encryption_enc_values_supported',
-     'token_endpoint_auth_methods_supported',
-     'token_endpoint_auth_signing_alg_values_supported',
-     'display_values_supported',
-     'claim_types_supported',
-     'claims_supported',
-     'service_documentation',
-     'ui_locales_supported',
-     'require_request_uri_registration',
-     'op_policy_uri',
-     'op_tos_uri',
-     'claims_locales_supported',
-     'request_uri_parameter_supported',
-     */
+    / Reserve for future use
+    'check_session_iframe',
+    'end_session_endpoint',
+    'scopes_supported',
+    'response_types_supported',
+    'grant_types_supported',
+    'acr_values_supported',
+    'subject_types_supported',
+    'userinfo_signing_alg_values_supported',
+    'userinfo_encryption_alg_values_supported',
+    'id_token_signing_alg_values_supported',
+    'id_token_encryption_alg_values_supported',
+    'id_token_encryption_enc_values_supported',
+    'request_object_signing_alg_values_supported',
+    'request_object_encryption_alg_values_supported',
+    'request_object_encryption_enc_values_supported',
+    'token_endpoint_auth_methods_supported',
+    'token_endpoint_auth_signing_alg_values_supported',
+    'display_values_supported',
+    'claim_types_supported',
+    'claims_supported',
+    'service_documentation',
+    'ui_locales_supported',
+    'require_request_uri_registration',
+    'op_policy_uri',
+    'op_tos_uri',
+    'claims_locales_supported',
+    'request_uri_parameter_supported',
+    */
 ];
 
 /**
@@ -193,9 +193,151 @@ OIDC.supportedRequestOptions = [
  */
 OIDC.supportedClientOptions = [
     'client_id',
-    'redirect_uri'
-//    'client_secret',
+    'redirect_uri',
+    'client_secret',
+    'registration_access_token',
+    'registration_client_uri',
+    'client_id_issued_at',
+    'client_secret_expires_at',
+    'application_type',
+    'client_name',
+    'redirect_uris'
 ];
+
+
+/**
+ * @property {array} OIDC.supportedClientRegistrationOptions                 - List of supported Client registration parameters
+ * @property {string} OIDC.supportedClientRegistrationOptions.client_id      - The client's client_id
+ * @property {string} OIDC.supportedClientRegistrationOptions.redirect_uri   - The client's redirect_uri
+ * @readonly
+ * @memberof OIDC
+ *
+ */
+OIDC.supportedClientRegistrationOptions = [
+    'redirect_uris',
+    'response_types',
+    'grant_types',
+    'application_type',
+    'contacts',
+    'client_name',
+    'logo_uri',
+    'client_uri',
+    'policy_uri',
+    'tos_uri',
+    'jwks_uri',
+    'jwks',
+    'sector_identifier_uri',
+    'subject_type',
+    'id_token_signed_response_alg',
+    'id_token_encrypted_response_alg',
+    'id_token_encrypted_response_enc',
+    'userinfo_signed_response_alg',
+    'userinfo_encrypted_response_alg',
+    'userinfo_encrypted_response_enc',
+    'request_object_signing_alg',
+    'request_object_encryption_alg',
+    'request_object_encryption_enc',
+    'token_endpoint_auth_method',
+    'token_endpoint_auth_signing_alg',
+    'default_max_age',
+    'require_auth_time',
+    'default_acr_values',
+    'initiate_login_uri',
+    'request_uris'
+];
+
+
+
+/**
+ * Sets the session ID used to store information
+ * @function setSessioniId
+ * @memberof OIDC
+ * @param {string} sessionId      - The string for the session id
+ */
+OIDC.setSessionId = function(sessionId)
+{
+    if(sessionId)
+        this["sessionId"] = sessionId;
+    else
+        this["sessionId"] = "OIDCSESSID"
+}
+
+
+/**
+ * Gets the session ID used to store information
+ * @function getSessionId
+ * @memberof OIDC
+ * @returns {string}     - The session id string
+ */
+OIDC.getSessionId = function()
+{
+    if(typeof this["sessionId"] !== 'undefined' && this["sessionId"])
+        return this["sessionId"];
+    else
+        return "OIDCSESSID";
+}
+
+
+/**
+ * Sets the key value pair into current session storage
+ * @function saveData
+ * @memberof OIDC
+ * @param {string} key        - The key name for the data
+ * @param {string} value      - The value
+ *
+ */
+OIDC.saveData = function(key, value) {
+
+    var obj = localStorage.getItem(this.getSessionId());
+    if(obj) {
+        obj = JSON.parse(obj);
+        obj[key] = value;
+    } else {
+        obj = {};
+        obj[key] = value
+    }
+    localStorage.setItem(this.getSessionId(), JSON.stringify(obj));
+}
+
+
+/**
+ * Gets the key value pair data from current session storage
+ * @function setSessioniId
+ * @memberof OIDC
+ * @param {string} key            - The string for the key
+ * @returns {string}              - The data pair value
+ */
+OIDC.getData = function(key)
+{
+    obj = localStorage.getItem(this.getSessionId());
+    if(obj) {
+        obj = JSON.parse(obj);
+        return obj[key];
+    } else {
+        obj = {};
+    }
+    return obj[key];
+}
+
+
+/**
+ * Deletes the key value pair data from current session storage
+ * @function deleteItem
+ * @memberof OIDC
+ * @param {string} key            - The string for the key
+ */
+OIDC.deleteItem = function(key)
+{
+    obj = localStorage.getItem(this.getSessionId());
+    if(obj) {
+        obj = JSON.parse(obj);
+        if(obj[key])
+            delete obj[key];
+        localStorage.setItem(this.getSessionId(), JSON.stringify(obj));
+    }
+
+
+}
 
 
 /**
@@ -221,9 +363,9 @@ OIDC.supportedClientOptions = [
 OIDC.setProviderInfo = function (p) {
     var params = this.supportedProviderOptions;
 
-    if (p !== 'undefined') {
+    if (typeof p !== 'undefined') {
         for (var i = 0; i < params.length; i++) {
-            if (p[params[i]] !== 'undefined') {
+            if (typeof p[params[i]] !== 'undefined') {
                 this[params[i]] = p[params[i]];
             }
         }
@@ -275,15 +417,16 @@ OIDC.storeInfo = function (providerInfo, clientInfo)
     var pInfo = {};
     var cInfo = {};
 
+
     if(providerInfo) {
         for(var i = 0; i < pOptions.length; i++) {
             if(typeof providerInfo[pOptions[i]] != 'undefined')
                 pInfo[pOptions[i]] = providerInfo[pOptions[i]];
         }
-        sessionStorage['providerInfo'] = JSON.stringify(pInfo);
+        this.saveData('providerInfo', pInfo);
+//        localStorage[sessionId]['providerInfo'] = JSON.stringify(pInfo);
     } else {
-        if(sessionStorage['providerInfo'])
-            sessionStorage.removeItem('providerInfo');
+        this.deleteItem('providerInfo');
     }
 
     if(clientInfo) {
@@ -291,10 +434,10 @@ OIDC.storeInfo = function (providerInfo, clientInfo)
             if(typeof clientInfo[cOptions[i]] != 'undefined')
                 cInfo[cOptions[i]] = clientInfo[cOptions[i]];
         }
-        sessionStorage['clientInfo'] = JSON.stringify(cInfo);
+//        localStorage[sessionId]['clientInfo'] = JSON.stringify(cInfo);
+            this.saveData('clientInfo', cInfo);
     } else {
-        if(sessionStorage['clientInfo'])
-            sessionStorage.removeItem('clientInfo');
+        this.deleteItem('clientInfo');
     }
 };
 
@@ -306,13 +449,13 @@ OIDC.storeInfo = function (providerInfo, clientInfo)
  */
 OIDC.restoreInfo = function()
 {
-    var providerInfo = sessionStorage['providerInfo'];
-    var clientInfo = sessionStorage['clientInfo'];
+    var providerInfo = this.getData('providerInfo');
+    var clientInfo = this.getData('clientInfo');
     if(providerInfo) {
-        this.setProviderInfo(JSON.parse(providerInfo));
+        this.setProviderInfo(providerInfo);
     }
     if(clientInfo) {
-        this.setClientInfo(JSON.parse(clientInfo));
+        this.setClientInfo(clientInfo);
     }
 };
 
@@ -372,6 +515,22 @@ OIDC.clearProviderInfo = function()
  * // login with default scope=openid, response_type=id_token
  * OIDC.login();
  */
+
+
+OIDC.log = function (txt) {
+    var logtxt = pageTime() + ' ' + txt;
+    console.log(logtxt);
+    this.pagelog(logtxt);
+}
+
+OIDC.pagelog = function(txt) {
+    var div = document.createElement('div');
+    div.textContent = txt;
+    div.className = 'log';
+    document.body.appendChild(div);
+}
+
+
 OIDC.login = function(reqOptions) {
     // verify required parameters
     this.checkRequiredInfo(new Array('client_id', 'redirect_uri', 'authorization_endpoint'));
@@ -409,8 +568,11 @@ OIDC.login = function(reqOptions) {
 
 
     // Store the them in session storage
-    sessionStorage['state'] = state;
-    sessionStorage['nonce'] = nonce;
+    this.saveData('state', state);
+    this.saveData('nonce', nonce);
+
+
+    this.log('state = ' + this.getData('state') + ' nonce = ' + this.getData('nonce'));
 
     var response_type = 'id_token';
     var scope = 'openid';
@@ -495,6 +657,8 @@ OIDC.login = function(reqOptions) {
             + '&state=' + state
             + optParams;
 
+    this.log('url = ' + url);
+
 
     window.location.replace(url);
 };
@@ -538,6 +702,42 @@ OIDC.verifyIdTokenSig = function (idtoken)
 
 
 /**
+ * Verifies the Self-Issued ID Token signature using the JWK Keyset from jwks or jwks_uri of the
+ * Identity Provider Configuration options set via {@link OIDC.setProviderInfo}.
+ * Supports only RSA signatures
+ * @param {string }idtoken      - The ID Token string
+ * @returns {boolean}           Indicates whether the signature is valid or not
+ * @see OIDC.setProviderInfo
+ * @throws {OidcException}
+ */
+OIDC.verifySelfIssuedIdTokenSig = function (idtoken)
+{
+    var verified = false;
+    if(idtoken) {
+        var idtParts = this.getIdTokenParts(idtoken);
+        var header = this.getJsonObject(idtParts[0])
+        var payload = this.getJsonObject(idtParts[1]);
+        if(!payload['sub_jwk'])
+            throw new OidcException('No sub_jwk in ID Token');
+        var jwks = {keys:[payload['sub_jwk']]};
+        if(!jwks)
+            throw new OidcException('No JWK keyset');
+        else {
+            if(header['alg'] && header['alg'].substr(0, 2) == 'RS') {
+                var jwk = this.jwk_get_key(jwks, 'RSA', 'sig', header['kid']);
+                if(!jwk)
+                    new OidcException('No matching JWK found');
+                else {
+                    verified = this.rsaVerifyJWS(idtoken, jwk[0]);
+                }
+            } else
+                throw new OidcException('Unsupported JWS signature algorithm ' + header['alg']);
+        }
+    }
+    return verified;
+}
+
+/**
  * Validates the information in the ID Token against configuration data in the Identity Provider
  * and Client configuration set via {@link OIDC.setProviderInfo} and set via {@link OIDC.setClientInfo}
  * @param {string} idtoken      - The ID Token string
@@ -555,6 +755,10 @@ OIDC.isValidIdToken = function(idtoken) {
         var payload = this.getJsonObject(idtParts[1])
         if(payload) {
             var now =  new Date() / 1000;
+            if( typeof payload['sub'] === 'undefined')
+                throw new OidcException("ID Token does not have 'sub'");
+            if( typeof payload['iat'] === 'undefined')
+                throw new OidcException("ID Token does not have 'iat'");
             if( payload['iat'] >  now + (5 * 60))
                 throw new OidcException('ID Token issued time is later than current time');
             if(payload['exp'] < now - (5*60))
@@ -570,7 +774,7 @@ OIDC.isValidIdToken = function(idtoken) {
                 throw new OidcException('invalid audience');
             if(payload['iss'] != this['issuer'])
                 throw new OidcException('invalid issuer ' + payload['iss'] + ' != ' + this['issuer']);
-            if(payload['nonce'] != sessionStorage['nonce'])
+            if(payload['nonce'] != this.getData('nonce'))
                 throw new OidcException('invalid nonce');
             valid = true;
         } else
@@ -626,16 +830,16 @@ OIDC.getValidIdToken = function()
     var smatch = url.match('state=([^&]*)');
     if (smatch) {
         var state = smatch[1] ;
-        var sstate = sessionStorage['state'];
+        var sstate = this.getData('state');
         var badstate = (state != sstate);
     }
 
     // Extract id token from the id_token parameter
     var match = url.match('id_token=([^&]*)');
     if (badstate) {
-        throw new OidcException("State mismatch");
+        throw new OidcException("State mismatch " + state + " != " + sstate);
     } else if (match) {
-        var id_token = match[1]; // String captured by ([^&]*)
+        var id_token = decodeURIComponent(match[1]); // String captured by ([^&]*)
 
         if (id_token) {
             var sigVerified = this.verifyIdTokenSig(id_token);
@@ -653,6 +857,52 @@ OIDC.getValidIdToken = function()
 
 
 /**
+ * Get the ID Token from the current page URL whose signature is verified and contents validated
+ * against the configuration data set via {@link OIDC.setProviderInfo} and {@link OIDC.setClientInfo}
+ * @returns {string|null}
+ * @throws {OidcException}
+ */
+OIDC.getValidSelfIssuedIdToken = function()
+{
+    var url = window.location.href;
+
+    // Check if there was an error parameter
+    var error = url.match('error=([^&]*)')
+    if (error) {
+        // If so, extract the error description and display it
+        var description = url.match('error_description=([^&]*)');
+        throw new OidcException(error[1] + ' Description: ' + description[1]);
+    }
+    // Exract state from the state parameter
+    var smatch = url.match('state=([^&]*)');
+    if (smatch) {
+        var state = smatch[1] ;
+        var sstate = this.getData('state');
+        var badstate = (state != sstate);
+    }
+
+    // Extract id token from the id_token parameter
+    var match = url.match('id_token=([^&]*)');
+    if (badstate) {
+        throw new OidcException("State mismatch " + state + " != " + sstate);
+    } else if (match) {
+        var id_token = decodeURIComponent(match[1]); // String captured by ([^&]*)
+
+        if (id_token) {
+            var sigVerified = this.verifySelfIssuedIdTokenSig(id_token);
+            var valid = this.isValidIdToken(id_token);
+            if(sigVerified && valid)
+                return id_token;
+        } else {
+            throw new OidcException('Could not retrieve ID Token from the URL');
+        }
+    } else {
+        throw new OidcException('No ID Token returned');
+    }
+    return null;
+};
+
+/**
  * Get Access Token from the current page URL
  *
  * @returns {string|null}  Access Token
@@ -664,7 +914,7 @@ OIDC.getAccessToken = function()
     // Check for token
     var token = url.match('access_token=([^&]*)');
     if (token)
-        return token[1];
+        return decodeURIComponent(token[1]);
     else
         return null;
 }
@@ -682,7 +932,7 @@ OIDC.getCode = function()
     // Check for code
     var code = url.match('code=([^(&)]*)');
     if (code) {
-        return code[1];
+        return decodeURIComponent(code[1]);
     }
 }
 
@@ -812,26 +1062,280 @@ OIDC.jwk_get_key = function(jwkIn, kty, use, kid )
 
 };
 
+
 /**
- * Performs discovery on the IdP issuer_id (OIDC.discover)
+ * Performs WebFinger discovery
+ * @function getWebFinger
+ * @memberof OIDC
+ * @param {string} identifier - The account identifier/hostname/email
+ * @returns {object|null}     - The JSON object of the discovery document or null
+ * @throws {OidcException}
+ */
+OIDC.getWebFinger = function(identifier)
+{
+    var issuerInfo = null;
+    if(identifier) {
+
+        var host, port, issuer, issuerUrl, principal, url;
+
+        var atPos = identifier.indexOf('@');
+        if(atPos != -1) { // contains @ (email, twitter handle, XRI)
+            if(atPos == 0) { // Don't handle identifiers beginning with '@'
+                return null;
+            }
+            else {
+                host = identifier.substr(atPos + 1);
+                issuer = 'https://' + host;
+                issuerUrl = issuer;
+                principal = 'acct:' + identifier;
+            }
+        } else {
+            var scheme = identifier.substr(0, 4).toLowerCase();
+            if(scheme != 'http')
+                idenfier = "https://" + identifier;
+
+            var pos = identifier.indexOf('#');
+            if(pos != -1) {
+                identifer = identifier.substr(0, pos);
+            }
+
+            var parts = this.parseUrl(identifier);
+            host = parts['hostname'];
+            port = parts['port'] ? ':' + parts['port'] : '';
+            issuer = 'https://' + host + port;
+            issuerUrl = issuer;
+            if(parts['pathname'] == '/')
+                principal = issuer;
+            else
+                principal = identifier;
+        }
+
+        queryParams = {'resource' : principal, 'rel' : 'http://openid.net/specs/connect/1.0/issuer'};
+        url = issuer + '/.well-known/webfinger?' + this.httpBuildQuery(queryParams);
+
+        var webfingerDoc = this.fetchJSON(url);
+        if(webfingerDoc) {
+            return this.getJsonObject(webfingerDoc);
+        }
+    }
+    return null;
+}
+
+
+
+/**
+ * parses URL into separate parts
+ * @function parseUrl
+ * @memberof OIDC
+ * @param {string} url        - URL string
+ * @returns {object|null}     - The object with individual parts of URL
+ */
+
+OIDC.parseUrl = function(url)
+{
+/*
+ url.href + '\n' +			// the full URL
+ url.protocol + '\n' +		// http:
+ url.hostname + '\n' +		// site.com
+ url.port + '\n' +			// 81
+ url.pathname + '\n' +		// /path/page
+ url.search + '\n' +			// ?a=1&b=2
+ url.hash					// #hash
+
+
+ */
+
+    var parser = document.createElement('a'),
+        searchObject = {},
+        queries, split, i, hashObject = {}, hashes;
+    // Let the browser do the work
+    parser.href = url;
+    // Convert query string to object
+    queries = parser.search.replace(/^\?/, '').split('&');
+    for( i = 0; i < queries.length; i++ ) {
+        split = queries[i].split('=');
+        searchObject[split[0]] = split[1];
+    }
+
+    // Convert hash string to object
+    hashes = parser.hash.replace(/^#/, '').split('&');
+    for( i = 0; i < queries.length; i++ ) {
+        split = hashes[i].split('=');
+        hashObject[split[0]] = split[1];
+    }
+
+    return {
+        protocol: parser.protocol,
+        host: parser.host,
+        hostname: parser.hostname,
+        port: parser.port,
+        pathname: parser.pathname,
+        search: parser.search,
+        searchObject: searchObject,
+        hash: parser.hash,
+        hashObject: hashObject
+    };
+
+}
+
+
+/**
+ * Construct URL query component
+ * @function httpBuildQuery
+ * @memberof OIDC
+ * @param {object} obj          - Query object keys and values
+ * @returns {string}            - Serialized query string
+ */
+
+OIDC.httpBuildQuery = function(obj)
+{
+    var str = [];
+    for(var p in obj)
+        if (obj.hasOwnProperty(p)) {
+            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+        }
+    return str.join("&");
+}
+
+
+/**
+ * Performs discovery on the identifier, account, email
  * @function discover
  * @memberof OIDC
  * @param {string} issuer     - The Identity Provider's issuer_id
  * @returns {object|null}     - The JSON object of the discovery document or null
  * @throws {OidcException}
  */
-OIDC.discover = function(issuer)
+OIDC.discover = function(identifier)
 {
-    var discovery = null;
-    if(issuer) {
-        var openidConfig = issuer + '/.well-known/openid-configuration';
+    var discovery = null, discoveryDoc = null, issuer = null;
+    if(identifier.substr(-32) == '.well-known/openid-configuration') { // points to provider config file already
         var discoveryDoc = this.fetchJSON(openidConfig);
         if(discoveryDoc)
-            discovery = this.getJsonObject(discoveryDoc)
+            return this.getJsonObject(discoveryDoc)
+    }
+
+    var webfinger = this.getWebFinger(identifier); // start with WebFinger to get Issuer
+    if(webfinger) {
+        issuer = webfinger['issuer'];
+        for(var i = 0; i < webfinger['links'].length; i++) {
+            if(webfinger['links'][i]['rel'] && webfinger['links'][i]['rel'] == 'http://openid.net/specs/connect/1.0/issuer') {
+                if(webfinger['links'][i]['href']) {
+                    var openidConfig = webfinger['links'][i]['href'] + '/.well-known/openid-configuration';
+                    discoveryDoc = this.fetchJSON(openidConfig);
+                    if(discoveryDoc) {
+                        return this.getJsonObject(discoveryDoc);
+                    }
+                }
+            }
+        }
     }
     return discovery;
-};
+}
 
+
+/**
+ * Performs client registration
+ * @function register
+ * @memberof OIDC
+ * @param {object} obj        - Client registration containing registration options
+ * @returns {object|null}     - The JSON object of the registration response or null
+ * @throws {OidcException}
+ */
+OIDC.register = function(obj)
+{
+    this.checkRequiredInfo(new Array('registration_endpoint'));
+    var params = this.supportedClientRegistrationOptions;
+    var regOptions = {};
+    if (typeof obj !== 'undefined') {
+        for (var i = 0; i < params.length; i++) {
+            if (typeof obj[params[i]] !== 'undefined') {
+                regOptions[params[i]] = obj[params[i]];
+            }
+        }
+    }
+
+    if(typeof regOptions['redirect_uris'] === 'undefined')
+        throw new OidcException('No redirect_uri set');
+
+
+    try {
+        var request = new XMLHttpRequest();
+        request.open('POST', this['registration_endpoint'], false);
+        request.setRequestHeader('Content-Type', 'application/json')
+        request.send(JSON.stringify(regOptions));
+
+        if (request.status === 200) {
+            return this.getJsonObject(request.responseText);
+        } else
+            throw new OidcException("fetchJSON - " + request.status + ' ' + request.statusText);
+
+    }
+    catch(e) {
+        console.log(e);
+        throw new OidcException('Unable to retrieve JSON file at ' + this['registration_endpoint'] + ' : ' + e.toString());
+    }
+
+    return null;
+
+}
+
+
+OIDC.createCORSRequest = function (method, url){
+    var xhr = new XMLHttpRequest();
+    if ("withCredentials" in xhr){
+        xhr.open(method, url, false);
+    } else if (typeof XDomainRequest != "undefined"){
+        xhr = new XDomainRequest();
+        xhr.open(method, url, false);
+    } else {
+        xhr = null;
+    }
+    return xhr;
+}
+
+/**
+ * Gets the UserInfo claims
+ * @function getUserinfo
+ * @memberof OIDC
+ * @param {object} obj        - Client registration containing registration options
+ * @returns {object|null}     - The JSON object of the registration response or null
+ * @throws {OidcException}
+ */
+OIDC.getUserInfo = function(token)
+{
+    this.checkRequiredInfo(new Array('userinfo_endpoint'));
+
+    if(typeof token === 'undefined' || !token)
+        throw new OidcException('No access token');
+
+
+    try {
+        var request = this.createCORSRequest('GET', this['userinfo_endpoint']);
+//        var request = new XHttpRequest();
+//        request.open('POST', this['userinfo_endpoint'], false);
+        request.onreadystatechange = function () {
+            if(request.readyState === XMLHttpRequest.DONE && request.status === 200) {
+                console.log(request.responseText);
+            }
+        }
+
+        request.send();
+
+        if (request.status === 200) {
+            return this.getJsonObject(request.responseText);
+        } else
+            throw new OidcException("UserInfo error  - " + request.status + ' ' + request.statusText);
+
+    }
+    catch(e) {
+        console.log(e);
+        throw new OidcException('Unable to get UserInfo at ' + this['userinfo_endpoint'] + ' : ' + e.toString());
+    }
+
+    return null;
+
+}
 
 /**
  * OidcException
